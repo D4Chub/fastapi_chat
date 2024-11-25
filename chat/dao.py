@@ -8,7 +8,7 @@ from chat.models import Message
 from database import async_session_maker
 
 
-class MessageDAO(BaseDao):
+class MessagesDAO(BaseDao):
     model = Message
 
     @classmethod
