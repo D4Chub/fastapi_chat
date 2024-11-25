@@ -7,6 +7,7 @@ from fastapi import APIRouter, Response
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy.testing.suite.test_reflection import users
+from fastapi.templating import Jinja2Templates
 
 from exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException, PasswordMismatchException
 from users.auth import get_password_hash, authenticate_user, create_access_token
@@ -15,6 +16,12 @@ from users.schemas import SUserAuth, SUserRegister
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
+templates = Jinja2Templates(directory='templates')
+
+
+@router.get("/", response_class=HTMLResponse, summary="Страница авторизации")
+async def get_categories(request: Request):
+    return templates.TemplateResponse("auth.html", {"request": request})
 
 
 @router.post("/register/")
