@@ -5,6 +5,10 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from typing import List, Dict
 
+from sqlalchemy.sql.functions import current_user
+from watchfiles import awatch
+from websockets import connect
+
 from chat.dao import MessagesDAO
 from chat.schemas import MessageRead, MessageCreate
 from users.dao import UsersDAO
@@ -24,3 +28,19 @@ async def get_chat_page(request: Request, user_data: User = Depends(get_current_
         "chat.html",
         {"request": request, "user": user_data, 'users_all': users_all}
     )
+
+
+@router.get("/messages/{user_id}", response_model=List[MessageRead])
+async def get_messages(user_id: int, current_user: User = Depends(get_current_user)):
+    return await MessagesDAO.get_messages_between_users(user_id1=user_id, user_id2=current_user.id) or []
+
+
+@router.post("/messages", response_model=MessageCreate)
+async def send_message(message: MessageCreate, current_user: User = Depends(current_user)):
+    await MessagesDAO.add(
+        sender_id=current_user.id,
+        content=message.content,
+        recipient_id=message.recipient_id
+    )
+
+    return {"recipient_id": message.recipient_id, "content": message.content, "status": "ok"}
