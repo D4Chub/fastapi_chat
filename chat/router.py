@@ -6,7 +6,6 @@ from fastapi.templating import Jinja2Templates
 from typing import List, Dict
 
 from sqlalchemy.sql.functions import current_user
-from watchfiles import awatch
 from websockets import connect
 
 from chat.dao import MessagesDAO
@@ -36,7 +35,7 @@ async def get_messages(user_id: int, current_user: User = Depends(get_current_us
 
 
 @router.post("/messages", response_model=MessageCreate)
-async def send_message(message: MessageCreate, current_user: User = Depends(current_user)):
+async def send_message(message: MessageCreate, current_user: User = Depends(get_current_user)):
     await MessagesDAO.add(
         sender_id=current_user.id,
         content=message.content,

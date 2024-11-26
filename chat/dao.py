@@ -1,6 +1,3 @@
-from shutil import which
-
-from dns.e164 import query
 from sqlalchemy import select, and_, or_
 
 from dao.base import BaseDao
@@ -32,4 +29,4 @@ class MessagesDAO(BaseDao):
                 )
             ).order_by(cls.model.id)
             result = await session.execute(query)
-            return result.scalar().all()
+            return result.scalars().all()
