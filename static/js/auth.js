@@ -1,17 +1,19 @@
+// Обработка кликов по вкладкам
 document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => showTab(tab.dataset.form));
+    tab.addEventListener('click', () => showTab(tab.dataset.tab));
 });
 
 function showTab(tabName) {
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
 
-    document.querySelector(`.tab[data-form="${tabName}"]`).classList.add('active');
+    document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
     document.getElementById(`${tabName}Form`).classList.add('active');
 }
 
 const validateForm = fields => fields.every(field => field.trim() !== '');
 
+// Функция для отправки запросов
 const sendRequest = async (url, data) => {
     try {
         const response = await fetch(url, {
@@ -35,6 +37,7 @@ const sendRequest = async (url, data) => {
     }
 };
 
+// Функция для обработки формы
 const handleFormSubmit = async (formType, url, fields) => {
     if (!validateForm(fields)) {
         alert('Пожалуйста, заполните все поля.');
@@ -50,6 +53,7 @@ const handleFormSubmit = async (formType, url, fields) => {
     }
 };
 
+// Обработка формы входа
 document.getElementById('loginButton').addEventListener('click', async (event) => {
     event.preventDefault();
 
@@ -59,6 +63,7 @@ document.getElementById('loginButton').addEventListener('click', async (event) =
     await handleFormSubmit('login', 'login/', [email, password]);
 });
 
+// Обработка формы регистрации
 document.getElementById('registerButton').addEventListener('click', async (event) => {
     event.preventDefault();
 
