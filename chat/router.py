@@ -42,4 +42,34 @@ async def send_message(message: MessageCreate, current_user: User = Depends(get_
         recipient_id=message.recipient_id
     )
 
+    message_data ={
+        "sender_id": current_user.id,
+        "recipient_id": message.recipient_id,
+        "content": message.content,
+    }
+
+    await notify_user(message.recipient_id, message_data)
+    await notify_user(current_user.id, message_data)
+
     return {"recipient_id": message.recipient_id, "content": message.content, "status": "ok"}
+
+
+active_connections: Dict[int, WebSocket] = {}
+
+
+async def notify_user(user_id: int, message: dict):
+    """Отправка сообщения если пользователь подключен"""
+    if user_id in active_connections:
+        websocket = active_connections[user_id]
+        await message.send_json(message)
+
+@router.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int):
+    await websocket.accept()
+    active_connections[user_id] = websocket
+
+    try:
+        while True:
+            await asyncio.sleep(1)
+    except WebSocketDisconnect:
+        active_connections.pop(user_id, None)
