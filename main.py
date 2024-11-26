@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from exceptions import TokenExpiredException, TokenNoFoundException
 from users.router import router as users_router
+from chat.router import router as chats_router
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory="static/"), name='static')
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(users_router)
+app.include_router(chats_router)
 
 
 @app.get("/")
