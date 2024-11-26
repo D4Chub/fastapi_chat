@@ -8,7 +8,7 @@ from users.dao import UsersDAO
 
 
 def get_token(request: Request):
-    token = request.cookies.get('users_access_token')
+    token = request.cookies.get('user_access_token')
     if not token:
         raise TokenNoFoundException
     return token
@@ -23,7 +23,6 @@ async def get_current_user(token: str = Depends(get_token)):
 
     expire: str = payload.get('exp')
     expire_time = datetime.fromtimestamp(int(expire), tz=timezone.utc)
-
     if (not expire) or (expire_time < datetime.now(timezone.utc)):
         raise TokenExpiredException
 
