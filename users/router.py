@@ -1,12 +1,6 @@
-from http.client import responses
-from os import access
-from pyexpat.errors import messages
-from tabnanny import check
-
 from fastapi import APIRouter, Response
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse
-from sqlalchemy.testing.suite.test_reflection import users
 from fastapi.templating import Jinja2Templates
 
 from exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException, PasswordMismatchException
@@ -26,7 +20,7 @@ async def get_categories(request: Request):
 
 @router.post("/register/")
 async def register_user(user_data: SUserRegister) -> dict:
-    user = await UsersDAO.find_one_or_more(email=user_data.email)
+    user = await UsersDAO.find_one_or_none(email=user_data.email)
     if user:
         raise UserAlreadyExistsException
 
